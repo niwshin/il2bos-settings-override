@@ -1,7 +1,5 @@
 $original_game_path = "E:\Games\steamapps\common\IL-2 Sturmovik Battle of Stalingrad"
 $original_startup_file_path = "$original_game_path\data\startup.cfg"
-$original_exe_file_path = "$original_game_path\bin\game\Il-2.exe"
-$il2args=
 $replacer_settings_path = "settings"
 $selected_startup_file_path = ""
 
@@ -32,6 +30,9 @@ function AnalyzeFile($local:path) {
     $local:content = Get-Content($local:path)
     $local:hash = @{}
     foreach($row in $local:content) {
+        if ($row.Length -lt 1) {
+            continue
+        }
         if ($row.Substring(0,1) -eq "[") {
             continue
         }
@@ -119,10 +120,11 @@ try {
 # il2 boS 実行
 
 try{
-    $proc = Start-Process $original_exe_file_path $il2args -PassThru -Wait
-    write-host $proc.ExitCode
+    $proc = Start-Process -PassThru -Wait steam://rungameid/307960
+    $code = $proc.ExitCode
+    Write-Output "IL2 was exited with code: $code"
 } catch {
-    Write-Output "Failed to execute $original_exe_file_path."
+    Write-Host $_
 } finally {
     $proc.Close()
 }
